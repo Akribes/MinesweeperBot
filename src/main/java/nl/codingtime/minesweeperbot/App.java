@@ -58,7 +58,7 @@ public class App {
 
         System.out.println("Please enter a token: ");
         config.setProperty("token", scanner.nextLine());
-        System.out.println("Please enter the biggest amount of cells in a puzzle (900): ");
+        System.out.println("Please enter the biggest amount of cells in a puzzle (press enter to use 900): ");
         String input = scanner.nextLine();
         config.setProperty("max-size", input.equals("") ? "900" : input);
 
