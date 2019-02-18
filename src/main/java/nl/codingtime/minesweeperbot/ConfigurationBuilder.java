@@ -12,6 +12,11 @@ public class ConfigurationBuilder {
         return this;
     }
 
+    public ConfigurationBuilder withMaxPuzzleSize(int maxPuzzleSize) {
+        value.setMaxSize(maxPuzzleSize);
+        return this;
+    }
+
     public Configuration build() {
         return value;
     }

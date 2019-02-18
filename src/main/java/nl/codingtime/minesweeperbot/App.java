@@ -37,7 +37,7 @@ public class App {
             Configuration finalConfig = config;
             new Thread(() -> {
                 try {
-                    bot[0] = new MinesweeperBot(finalConfig.getToken());
+                    bot[0] = new MinesweeperBot(finalConfig);
                 } catch (LoginException e) {
                     System.out.println("Failed to login!");
                 }
@@ -58,6 +58,9 @@ public class App {
 
         System.out.println("Please enter a token: ");
         config.setProperty("token", scanner.nextLine());
+        System.out.println("Please enter the biggest amount of cells in a puzzle (900): ");
+        String input = scanner.nextLine();
+        config.setProperty("max-size", input.equals("") ? "900" : input);
 
         scanner.close();
 
@@ -73,6 +76,6 @@ public class App {
         config.load(in);
         in.close();
 
-        return builder.withToken(config.getProperty("token")).build();
+        return builder.withToken(config.getProperty("token")).withMaxPuzzleSize(Integer.parseInt(config.getProperty("max-size"))).build();
     }
 }

@@ -18,10 +18,12 @@ public class MinesweeperBot {
     private Stats stats;
     private JDA jda;
     private boolean active = false;
+    private Configuration config;
 
 
-    public MinesweeperBot(String token) throws LoginException {
-        jda = new JDABuilder(token).addEventListener(new MinesweeperBotListenerAdapter(this)).build();
+    public MinesweeperBot(Configuration configuration) throws LoginException {
+        this.config = configuration;
+        jda = new JDABuilder(config.getToken()).addEventListener(new MinesweeperBotListenerAdapter(this)).build();
         jda.getPresence().setGame(Game.playing("DM or ping me!"));
     }
 
@@ -69,5 +71,9 @@ public class MinesweeperBot {
 
         statsUpdater = new StatsUpdater(stats, this);
         statsUpdater.start();
+    }
+
+    public Configuration getConfig() {
+        return config;
     }
 }
