@@ -13,6 +13,8 @@ import java.util.List;
 public class MinesweeperBotListenerAdapter extends ListenerAdapter {
     private MinesweeperBot bot;
 
+    private final static int MAX_SIZE = 900; // TODO move to config
+
     public MinesweeperBotListenerAdapter(MinesweeperBot bot) {
         this.bot = bot;
     }
@@ -42,7 +44,10 @@ public class MinesweeperBotListenerAdapter extends ListenerAdapter {
     private List<String> generateMessages(String message, User requestingUser) {
         String command =  message.replace("<@" + bot.getJda().getSelfUser().getId() + ">", "").trim();
         String[] puzzle = command.split("/");
-        String result = "%ping%, make sure to follow this format: `width/height/mines`!";
+        String result = "%ping%, make sure to follow this format: `width/height/mines` (all positive numbers)!";
+        if (Integer.parseInt(puzzle[0]) * Integer.parseInt(puzzle[1]) > MAX_SIZE) {
+            result = "%ping%, the puzzle you want me to generate will be too big!";
+        }
         try {
             result = new MinesweeperPuzzleBuilder().withWidth(Integer.parseInt(puzzle[0]))
                     .withHeight(Integer.parseInt(puzzle[1])).withAmountOfMines(Integer.parseInt(puzzle[2])).build().toString();
