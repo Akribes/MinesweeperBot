@@ -45,14 +45,15 @@ public class MinesweeperBotListenerAdapter extends ListenerAdapter {
         String result = "%ping%, make sure to follow this format: `width/height/mines` (all positive numbers)!";
         if (Integer.parseInt(puzzle[0]) * Integer.parseInt(puzzle[1]) > bot.getConfig().getMaxSize()) {
             result = "%ping%, the puzzle you want me to generate will be too big!";
-        }
-        try {
-            result = new MinesweeperPuzzleBuilder().withWidth(Integer.parseInt(puzzle[0]))
-                    .withHeight(Integer.parseInt(puzzle[1])).withAmountOfMines(Integer.parseInt(puzzle[2])).build().toString();
-            bot.getStats().incrementUses();
-            bot.getStats().incrementMines(Long.parseLong(puzzle[2]));
-        } catch (IllegalArgumentException | ArrayIndexOutOfBoundsException e) {
-            // Nothing wrong, just tell the user that he made a mistake
+        } else {
+            try {
+                result = new MinesweeperPuzzleBuilder().withWidth(Integer.parseInt(puzzle[0]))
+                        .withHeight(Integer.parseInt(puzzle[1])).withAmountOfMines(Integer.parseInt(puzzle[2])).build().toString();
+                bot.getStats().incrementUses();
+                bot.getStats().incrementMines(Long.parseLong(puzzle[2]));
+            } catch (IllegalArgumentException | ArrayIndexOutOfBoundsException e) {
+                // Nothing wrong, just tell the user that he made a mistake
+            }
         }
 
         String[] lines = result.split("\n");
