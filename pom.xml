@@ -12,7 +12,7 @@
     <repositories>
         <repository>
             <id>MartsMavenRepo</id>
-            <url>https://github.com/The947thTokay/MartsMavenRepo/mvn-repo/</url>
+            <url>https://raw.github.com/The947thTokay/MartsMavenRepo/mvn-repo/</url>
             <snapshots>
                 <enabled>true</enabled>
                 <updatePolicy>always</updatePolicy>
