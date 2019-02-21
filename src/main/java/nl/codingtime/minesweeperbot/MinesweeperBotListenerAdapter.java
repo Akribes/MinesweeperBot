@@ -26,7 +26,7 @@ public class MinesweeperBotListenerAdapter extends ListenerAdapter {
             "- A number: this means that in the eight surrounding squares, that number of mines are hidden.\n" +
             "- A mine: game over!\n" +
             "There should be very little guessing involved. Think carefully!";
-    private static final String INVITE_MESSAGE = "If you want me to, I can be in your server too! Here's an" +
+    private static final String INVITE_MESSAGE = "If you want me to, I can be in your server too! Here's an " +
             "authorization link: ";
     private static final String STATS_MESSAGE = "I keep track of what I'm doing. Here are some statistics about me:\n" +
             "I've hidden **%mines% mines** in **%puzzles% puzzles** for **%users% users** in **%guilds% servers** and" +
