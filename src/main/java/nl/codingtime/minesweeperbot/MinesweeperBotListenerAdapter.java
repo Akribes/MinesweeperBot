@@ -1,9 +1,7 @@
 package nl.codingtime.minesweeperbot;
 
 import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.MessageChannel;
-import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.ReadyEvent;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
@@ -69,10 +67,7 @@ public class MinesweeperBotListenerAdapter extends ListenerAdapter {
                     .addField("Let's play Minesweeper!", GETTING_STARTED_MESSAGE, false)
                     .addField("How to play it?", HOW_TO_PLAY_MESSAGE, false)
                     .addField("May I blow up your server?",
-                            INVITE_MESSAGE + bot.getJda().asBot().getInviteUrl(
-                                    Permission.VIEW_CHANNEL, Permission.MESSAGE_READ, Permission.MESSAGE_WRITE,
-                                    Permission.MESSAGE_EXT_EMOJI, Permission.MESSAGE_HISTORY,
-                                    Permission.MESSAGE_ADD_REACTION), false)
+                            INVITE_MESSAGE + "https://bit.ly/MinesweeperBot", false)
                     .addField("Stats", STATS_MESSAGE
                             .replaceAll("%mines%", String.valueOf(bot.getStats().getMines()))
                             .replaceAll("%puzzles%", String.valueOf(bot.getStats().getUses()))
