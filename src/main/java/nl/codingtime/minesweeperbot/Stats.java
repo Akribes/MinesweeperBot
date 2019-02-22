@@ -7,18 +7,19 @@ public class Stats {
     private long uses;
     private long mines;
     private long servers;
-    private long privateChannels;
     private Set<Long> users;
+    private Set<Long> privateChannelUsers;
 
     public Stats() {
-        this(0, 0, 0, new HashSet<>());
+        this(0, 0, 0, new HashSet<>(), new HashSet<>());
     }
 
-    public Stats(long uses, long mines, long servers, Set<Long> users) {
+    public Stats(long uses, long mines, long servers, Set<Long> users, Set<Long> privateChannelUsers) {
         this.uses = uses;
         this.mines = mines;
         this.servers = servers;
         this.users = users;
+        this.privateChannelUsers = privateChannelUsers;
     }
 
     public long getUses() {
@@ -49,20 +50,23 @@ public class Stats {
         return users;
     }
 
-    public void registerUser(Long userId) {
+    public void registerUser(long userId) {
         try {
             users.add(userId);
         } catch (UnsupportedOperationException e) {
             // Do nothing, user has already used me before
         }
-
     }
 
-    public long getPrivateChannels() {
-        return privateChannels;
+    public Set<Long> getPrivateChannelUserIds() {
+        return privateChannelUsers;
     }
 
-    public void setPrivateChannels(long privateChannels) {
-        this.privateChannels = privateChannels;
+    public void registerPrivateChannelUser(long userId) {
+        try {
+            privateChannelUsers.add(userId);
+        } catch (UnsupportedOperationException e) {
+            // Do nothing, user has already messaged me before
+        }
     }
 }

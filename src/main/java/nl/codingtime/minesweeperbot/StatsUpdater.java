@@ -2,6 +2,7 @@ package nl.codingtime.minesweeperbot;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import net.dv8tion.jda.core.entities.PrivateChannel;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -31,7 +32,6 @@ public class StatsUpdater extends Thread {
                 break;
             }
             forStats.setServers(bot.getJda().getGuilds().size());
-            forStats.setPrivateChannels(bot.getJda().getPrivateChannels().size());
             writeStats(forStats);
             System.out.println("StatsUpdater wrote stats.");
         }

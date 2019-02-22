@@ -45,17 +45,17 @@ public class MinesweeperBotListenerAdapter extends ListenerAdapter {
     public void onGuildMessageReceived(GuildMessageReceivedEvent event) {
         if (event.getAuthor().isBot()) return;
         if (event.getMessage().getContentRaw().startsWith("<@" + bot.getJda().getSelfUser().getId() + ">")) {
-            handleCommand(event.getMessage().getContentRaw(), event.getAuthor(), event.getChannel());
+            handleCommand(event.getMessage().getContentRaw(), event.getAuthor(), event.getChannel(), false);
         }
     }
 
     @Override
     public void onPrivateMessageReceived(PrivateMessageReceivedEvent event) {
         if (event.getAuthor().isBot()) return;
-        handleCommand(event.getMessage().getContentRaw(), event.getAuthor(), event.getChannel());
+        handleCommand(event.getMessage().getContentRaw(), event.getAuthor(), event.getChannel(), true);
     }
 
-    private void handleCommand(String message, User sender, MessageChannel channel) {
+    private void handleCommand(String message, User sender, MessageChannel channel, boolean privateChannel) {
         String command =  message.replace("<@" + bot.getJda().getSelfUser().getId() + ">", "").trim();
         String[] puzzle = command.split("/");
         String result;
@@ -73,7 +73,7 @@ public class MinesweeperBotListenerAdapter extends ListenerAdapter {
                             .replaceAll("%puzzles%", String.valueOf(bot.getStats().getUses()))
                             .replaceAll("%users%", String.valueOf(bot.getStats().getUserIds().size()))
                             .replaceAll("%guilds%", String.valueOf(bot.getStats().getServers()))
-                            .replaceAll("%privateChannels%", String.valueOf(bot.getStats().getPrivateChannels())),
+                            .replaceAll("%privateChannels%", String.valueOf(bot.getStats().getPrivateChannelUserIds().size())),
                             false)
                     .setFooter("Made by Mart#1056.", bot.getJda().getUserById(350609220846223362L).getAvatarUrl())
                     .build()).queue();
@@ -87,6 +87,9 @@ public class MinesweeperBotListenerAdapter extends ListenerAdapter {
                 bot.getStats().incrementUses();
                 bot.getStats().incrementMines(Long.parseLong(puzzle[2]));
                 bot.getStats().registerUser(sender.getIdLong());
+                if (privateChannel) {
+                    bot.getStats().registerPrivateChannelUser(sender.getIdLong());
+                }
             } catch (IllegalArgumentException | ArrayIndexOutOfBoundsException e) {
                 result = "%ping%, make sure to follow this format: `width/height/mines` (all positive numbers)!";
             }
