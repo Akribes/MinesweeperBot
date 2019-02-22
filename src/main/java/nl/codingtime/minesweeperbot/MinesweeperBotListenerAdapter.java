@@ -91,6 +91,7 @@ public class MinesweeperBotListenerAdapter extends ListenerAdapter {
                         .withHeight(Integer.parseInt(puzzle[1])).withAmountOfMines(Integer.parseInt(puzzle[2])).build().toString();
                 bot.getStats().incrementUses();
                 bot.getStats().incrementMines(Long.parseLong(puzzle[2]));
+                bot.getStats().registerUser(sender.getIdLong());
             } catch (IllegalArgumentException | ArrayIndexOutOfBoundsException e) {
                 result = "%ping%, make sure to follow this format: `width/height/mines` (all positive numbers)!";
             }
@@ -117,8 +118,6 @@ public class MinesweeperBotListenerAdapter extends ListenerAdapter {
             String sentMessage = messages.get(i);
             messages.set(i, sentMessage.replace("%ping%", "<@" + sender.getId() + ">"));
         }
-
-        bot.getStats().registerUser(sender.getIdLong());
 
         for (String s : messages) {
             channel.sendMessage(s).queue();
