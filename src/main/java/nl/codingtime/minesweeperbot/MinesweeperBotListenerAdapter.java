@@ -59,7 +59,8 @@ public class MinesweeperBotListenerAdapter extends ListenerAdapter {
 
     private void handleCommand(String message, User sender, MessageChannel channel, boolean privateChannel) {
         System.out.println(sender + ": " + message);
-        String command =  message.replace("<@" + bot.getJda().getSelfUser().getId() + ">", "").trim();
+        String command =  message.replace("<@" + bot.getJda().getSelfUser().getId() + ">", "")
+                .replace("!", "").trim();
         String[] puzzle = command.split("/");
         String result;
         if (!command.replaceFirst("/", "").contains("/")) {
