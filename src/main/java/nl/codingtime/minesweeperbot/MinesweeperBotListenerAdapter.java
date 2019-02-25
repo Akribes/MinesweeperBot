@@ -44,8 +44,10 @@ public class MinesweeperBotListenerAdapter extends ListenerAdapter {
     @Override
     public void onGuildMessageReceived(GuildMessageReceivedEvent event) {
         if (event.getAuthor().isBot()) return;
-        if (event.getMessage().getContentRaw().startsWith("<@" + bot.getJda().getSelfUser().getId() + ">")) {
-            handleCommand(event.getMessage().getContentRaw(), event.getAuthor(), event.getChannel(), false);
+        String content = event.getMessage().getContentRaw();
+        if (content.startsWith("<@" + bot.getJda().getSelfUser().getId() + ">") ||
+                content.startsWith("<@!" + bot.getJda().getSelfUser().getId() + ">")) {
+            handleCommand(content, event.getAuthor(), event.getChannel(), false);
         }
     }
 
@@ -56,6 +58,7 @@ public class MinesweeperBotListenerAdapter extends ListenerAdapter {
     }
 
     private void handleCommand(String message, User sender, MessageChannel channel, boolean privateChannel) {
+        System.out.println(sender + ": " + message);
         String command =  message.replace("<@" + bot.getJda().getSelfUser().getId() + ">", "").trim();
         String[] puzzle = command.split("/");
         String result;
