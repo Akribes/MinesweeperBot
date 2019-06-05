@@ -7,7 +7,7 @@ import net.dv8tion.jda.core.events.ReadyEvent;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.events.message.priv.PrivateMessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
-import nl.codingtime.discordminesweepergenerator.MinesweeperPuzzleBuilder;
+import nl.codingtime.minesweeperbot.generator.MinesweeperPuzzleBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
