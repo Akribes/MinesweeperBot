@@ -46,9 +46,9 @@ public class App {
             System.out.println("Failed to load the configuration!");
         }
 
-        System.out.println("Press enter to exit.");
-        scanner.nextLine();
-        bot[0].shutdown();
+
+        System.out.println("Press ^C to exit.");
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> bot[0].shutdown()));
     }
 
     private static void generateConfig() throws IOException {

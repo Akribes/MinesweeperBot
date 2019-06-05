@@ -46,7 +46,7 @@ public class MinesweeperBot {
         setActive(false);
         statsUpdater.interrupt();
         jda.shutdownNow();
-        System.exit(0);
+        System.out.println("Goodbye");
     }
 
     public void setActive(boolean active) {
