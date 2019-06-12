@@ -1,13 +1,11 @@
 package nl.codingtime.minesweeperbot;
 
 import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.entities.MessageChannel;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.ReadyEvent;
 import net.dv8tion.jda.core.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.core.events.guild.GuildLeaveEvent;
-import net.dv8tion.jda.core.events.guild.GuildReadyEvent;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.events.message.priv.PrivateMessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
@@ -16,8 +14,6 @@ import org.discordbots.api.client.DiscordBotListAPI;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -53,17 +49,17 @@ public class MinesweeperBotListenerAdapter extends ListenerAdapter {
         bot.setActive(true);
         bot.setupStats();
 
-        try {
-            publishStats();
-        } catch (IOException e) {
-            System.out.println("Can't post stats to bot lists!");
-        }
-
         if (bot.getConfig().getDiscordBotsToken() != null) {
             this.api = new DiscordBotListAPI.Builder()
                     .token(bot.getConfig().getDiscordBotsToken())
                     .botId(bot.getJda().getSelfUser().getId())
                     .build();
+        }
+
+        try {
+            publishStats();
+        } catch (IOException e) {
+            System.out.println("Can't post stats to bot lists!");
         }
     }
 
