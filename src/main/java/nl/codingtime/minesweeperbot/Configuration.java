@@ -1,22 +1,25 @@
 package nl.codingtime.minesweeperbot;
 
 public class Configuration {
-    private String token = null;
-    private int maxSize = 900;
+    private String token;
+    private int maxSize;
+    private String divineToken;
+
+    public Configuration(String token, Integer maxSize, String divineBotListToken) {
+        this.token = token;
+        this.maxSize = maxSize == null ? 900 : maxSize;
+        this.divineToken = divineBotListToken;
+    }
 
     public String getToken() {
         return token;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
     }
 
     public int getMaxSize() {
         return maxSize;
     }
 
-    public void setMaxSize(int maxSize) {
-        this.maxSize = maxSize;
+    public String getDivineToken() {
+        return this.divineToken;
     }
 }

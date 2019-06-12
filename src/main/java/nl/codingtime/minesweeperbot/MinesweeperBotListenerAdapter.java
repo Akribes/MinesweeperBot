@@ -1,14 +1,24 @@
 package nl.codingtime.minesweeperbot;
 
 import net.dv8tion.jda.core.EmbedBuilder;
+import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.entities.MessageChannel;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.ReadyEvent;
+import net.dv8tion.jda.core.events.guild.GuildJoinEvent;
+import net.dv8tion.jda.core.events.guild.GuildLeaveEvent;
+import net.dv8tion.jda.core.events.guild.GuildReadyEvent;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.events.message.priv.PrivateMessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import nl.codingtime.minesweeperbot.generator.MinesweeperPuzzleBuilder;
 
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,6 +49,12 @@ public class MinesweeperBotListenerAdapter extends ListenerAdapter {
     public void onReady(ReadyEvent event) {
         bot.setActive(true);
         bot.setupStats();
+
+        try {
+            publishStats();
+        } catch (IOException e) {
+            System.out.println("Can't post stats to bot lists!");
+        }
     }
 
     @Override
@@ -123,6 +139,43 @@ public class MinesweeperBotListenerAdapter extends ListenerAdapter {
 
         for (String s : messages) {
             channel.sendMessage(s).queue();
+        }
+    }
+
+    @Override
+    public void onGuildJoin(GuildJoinEvent event) {
+        try {
+            this.publishStats();
+        } catch (IOException e) {
+            System.out.println("Can't post stats to bot lists!");
+        }
+    }
+
+    @Override
+    public void onGuildLeave(GuildLeaveEvent event) {
+        try {
+            this.publishStats();
+        } catch (IOException e) {
+            System.out.println("Can't post stats to bot lists!");
+        }
+    }
+
+    private void publishStats() throws IOException {
+        // Divine Discord Bot List
+        if (bot.getConfig().getDivineToken() != null ) {
+            URL url = new URL("https://divinediscordbots.com/bot/" + bot.getJda().getSelfUser().getId() + "/stats");
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("POST");
+            connection.setDoOutput(true);
+
+            byte[] out = ("{\"server_count\":" + bot.getStats().getServers() + "}").getBytes(StandardCharsets.UTF_8);
+
+            connection.setFixedLengthStreamingMode(out.length);
+            connection.setRequestProperty("authorization", bot.getConfig().getDivineToken());
+            connection.setRequestProperty("Content-Type", "application/json");
+            connection.setRequestProperty("charset", "UTF-8");
+            connection.connect();
+            connection.getOutputStream().write(out);
         }
     }
 }

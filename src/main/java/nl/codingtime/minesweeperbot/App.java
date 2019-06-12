@@ -62,6 +62,8 @@ public class App {
         String input = scanner.nextLine();
         config.setProperty("max-size", input.equals("") ? "900" : input);
 
+        config.setProperty("divine-discord-bot-list-token", null);
+
         scanner.close();
 
         config.store(out, "This is the configuration for Minesweeper Bot.");
@@ -69,13 +71,13 @@ public class App {
     }
 
     private static Configuration readConfiguration() throws IOException {
-        ConfigurationBuilder builder = new ConfigurationBuilder();
         Properties config = new Properties();
 
         InputStream in = new FileInputStream(CONFIGURATION_FILE);
         config.load(in);
         in.close();
 
-        return builder.withToken(config.getProperty("token")).withMaxPuzzleSize(Integer.parseInt(config.getProperty("max-size"))).build();
+        return new Configuration(config.getProperty("token"), Integer.parseInt(config.getProperty("max-size")),
+                config.getProperty("divine-discord-bot-list-token"));
     }
 }

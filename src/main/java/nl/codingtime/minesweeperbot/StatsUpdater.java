@@ -2,7 +2,6 @@ package nl.codingtime.minesweeperbot;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import net.dv8tion.jda.core.entities.PrivateChannel;
 
 import java.io.BufferedWriter;
 import java.io.File;
