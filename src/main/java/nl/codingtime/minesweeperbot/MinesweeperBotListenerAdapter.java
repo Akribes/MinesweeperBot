@@ -176,6 +176,8 @@ public class MinesweeperBotListenerAdapter extends ListenerAdapter {
             connection.setRequestProperty("charset", "UTF-8");
             connection.connect();
             connection.getOutputStream().write(out);
+
+            System.out.println("Published server count to Divine Discord Bot List");
         }
     }
 }
