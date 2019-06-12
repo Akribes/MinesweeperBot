@@ -177,7 +177,8 @@ public class MinesweeperBotListenerAdapter extends ListenerAdapter {
             connection.connect();
             connection.getOutputStream().write(out);
 
-            System.out.println("Published server count to Divine Discord Bot List");
+            System.out.println(String.format("Published server count (%d) to Divine Discord Bot List",
+                    bot.getStats().getServers()));
         }
     }
 }
