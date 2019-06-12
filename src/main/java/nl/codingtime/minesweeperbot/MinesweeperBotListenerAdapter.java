@@ -26,7 +26,8 @@ public class MinesweeperBotListenerAdapter extends ListenerAdapter {
     private static final String GETTING_STARTED_MESSAGE = "Hi, I'm MinesweeperBot. I can generate Minesweeper puzzles" +
             " for you! To get started, DM or ping me the size and amount of mines for the puzzle. For example, if you" +
             " say `5/6/7` (in servers: `@Minesweeper Bot#6157 5/6/7`), I'll send you a puzzle of 5 by 6 squares with 7 mines. If you're completely new to" + // TODO: Format the mention
-            " Minesweeper, read *How to play it?*, or you might get blown up by a mine!";
+            " Minesweeper, read *How to play it?*, or you might get blown up by a mine!\n\n" +
+            "For support, you can join the Minesweeper Bot Discord server: https://discord.gg/uRXUEE4";
     private static final String HOW_TO_PLAY_MESSAGE = "A Minesweeper puzzle is a grid of squares you can click on." +
             " On this grid, several mines are located. The goal is to click all squares except for the squares with" +
             " mines. When you click on a square, one of these symbols is revealed:\n" +
