@@ -46,12 +46,6 @@ public class MinesweeperBotListenerAdapter extends ListenerAdapter {
 
     public MinesweeperBotListenerAdapter(MinesweeperBot bot) {
         this.bot = bot;
-        if (bot.getConfig().getDiscordBotsToken() != null) {
-            this.api = new DiscordBotListAPI.Builder()
-                    .token(bot.getConfig().getDiscordBotsToken())
-                    .botId(bot.getJda().getSelfUser().getId())
-                    .build();
-        }
     }
 
     @Override
@@ -63,6 +57,13 @@ public class MinesweeperBotListenerAdapter extends ListenerAdapter {
             publishStats();
         } catch (IOException e) {
             System.out.println("Can't post stats to bot lists!");
+        }
+
+        if (bot.getConfig().getDiscordBotsToken() != null) {
+            this.api = new DiscordBotListAPI.Builder()
+                    .token(bot.getConfig().getDiscordBotsToken())
+                    .botId(bot.getJda().getSelfUser().getId())
+                    .build();
         }
     }
 
