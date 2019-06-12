@@ -12,6 +12,7 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.events.message.priv.PrivateMessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import nl.codingtime.minesweeperbot.generator.MinesweeperPuzzleBuilder;
+import org.discordbots.api.client.DiscordBotListAPI;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -40,9 +41,16 @@ public class MinesweeperBotListenerAdapter extends ListenerAdapter {
             "I've hidden **%mines% mines** in **%puzzles% puzzles** for **%users% users** in **%guilds% servers** and" +
             " **%privateChannels% private channels.**";
     private MinesweeperBot bot;
+    private DiscordBotListAPI api;
 
     public MinesweeperBotListenerAdapter(MinesweeperBot bot) {
         this.bot = bot;
+        if (bot.getConfig().getDiscordBotsToken() != null) {
+            this.api = new DiscordBotListAPI.Builder()
+                    .token(bot.getConfig().getDiscordBotsToken())
+                    .botId(bot.getJda().getSelfUser().getId())
+                    .build();
+        }
     }
 
     @Override
@@ -178,6 +186,12 @@ public class MinesweeperBotListenerAdapter extends ListenerAdapter {
             connection.getOutputStream().write(out);
 
             System.out.println(String.format("Published server count (%d) to Divine Discord Bot List",
+                    bot.getStats().getServers()));
+        }
+        // discordbots.org
+        if (bot.getConfig().getDiscordBotsToken() != null) {
+            api.setStats((int) bot.getStats().getServers());
+            System.out.println(String.format("Published server count (%d) to discordbots.org",
                     bot.getStats().getServers()));
         }
     }

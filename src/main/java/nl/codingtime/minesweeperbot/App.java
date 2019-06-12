@@ -63,6 +63,7 @@ public class App {
         config.setProperty("max-size", input.equals("") ? "900" : input);
 
         config.setProperty("divine-discord-bot-list-token", null);
+        config.setProperty("discordbots-token", null);
 
         scanner.close();
 
@@ -78,6 +79,6 @@ public class App {
         in.close();
 
         return new Configuration(config.getProperty("token"), Integer.parseInt(config.getProperty("max-size")),
-                config.getProperty("divine-discord-bot-list-token"));
+                config.getProperty("divine-discord-bot-list-token"), config.getProperty("discordbots-token"));
     }
 }
