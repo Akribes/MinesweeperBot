@@ -1,5 +1,8 @@
 package nl.codingtime.minesweeperbot;
 
+import com.fatboyindustrial.gsonjavatime.OffsetDateTimeConverter;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.MessageChannel;
 import net.dv8tion.jda.core.entities.User;
@@ -10,14 +13,26 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.events.message.priv.PrivateMessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import nl.codingtime.minesweeperbot.generator.MinesweeperPuzzleBuilder;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.HttpUrl;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 import org.discordbots.api.client.DiscordBotListAPI;
+import org.discordbots.api.client.io.UnsuccessfulHttpException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 public class MinesweeperBotListenerAdapter extends ListenerAdapter {
     private static final String GETTING_STARTED_MESSAGE = "Hi, I'm MinesweeperBot. I can generate Minesweeper puzzles" +
@@ -39,9 +54,12 @@ public class MinesweeperBotListenerAdapter extends ListenerAdapter {
             " **%privateChannels% private channels.**";
     private MinesweeperBot bot;
     private DiscordBotListAPI api;
+    private Gson gson;
+    private OkHttpClient httpClient;
 
     public MinesweeperBotListenerAdapter(MinesweeperBot bot) {
         this.bot = bot;
+        this.gson = (new GsonBuilder()).registerTypeAdapter(OffsetDateTime.class, new OffsetDateTimeConverter()).create();
     }
 
     @Override
@@ -55,6 +73,12 @@ public class MinesweeperBotListenerAdapter extends ListenerAdapter {
                     .botId(bot.getJda().getSelfUser().getId())
                     .build();
         }
+
+
+        this.httpClient = (new OkHttpClient.Builder()).addInterceptor((chain) -> {
+            Request req = chain.request().newBuilder().addHeader("authorization", bot.getConfig().getDivineToken()).build();
+            return chain.proceed(req);
+        }).build();
 
         try {
             publishStats();
@@ -169,8 +193,8 @@ public class MinesweeperBotListenerAdapter extends ListenerAdapter {
     private void publishStats() throws IOException {
         // Divine Discord Bot List
         if (bot.getConfig().getDivineToken() != null ) {
-            URL url = new URL("https://divinediscordbots.com/bot/" + bot.getJda().getSelfUser().getId() + "/stats");
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            /*URL url2 = new URL("https://divinediscordbots.com/bot/" + bot.getJda().getSelfUser().getId() + "/stats");
+            HttpURLConnection connection = (HttpURLConnection) url2.openConnection();
             connection.setRequestMethod("POST");
             connection.setDoOutput(true);
 
@@ -181,10 +205,31 @@ public class MinesweeperBotListenerAdapter extends ListenerAdapter {
             connection.setRequestProperty("Content-Type", "application/json");
             connection.setRequestProperty("charset", "UTF-8");
             connection.connect();
-            connection.getOutputStream().write(out);
+            connection.getOutputStream().write(out);*/
 
             System.out.println(String.format("Published server count (%d) to Divine Discord Bot List",
                     bot.getStats().getServers()));
+
+
+            JSONObject json = (new JSONObject()).put("server_count", bot.getStats().getServers());
+            HttpUrl url =  new HttpUrl.Builder()
+                    .scheme("https")
+                    .host("devinediscordbots.com")
+                    .addPathSegment("bot")
+                    .addPathSegment(bot.getJda().getSelfUser().getId())
+                    .addPathSegment("stats")
+                    .build();
+            MediaType mediaType = MediaType.parse("application/json");
+            RequestBody body = RequestBody.create(mediaType, json.toString());
+            Request request = (new okhttp3.Request.Builder()).post(body).url(url).build();
+            Call call = this.httpClient.newCall(request);
+            call.enqueue(new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {}
+
+                @Override
+                public void onResponse(Call call, Response response) {}
+            });
         }
         // discordbots.org
         if (bot.getConfig().getDiscordBotsToken() != null) {
