@@ -22,17 +22,12 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 import org.discordbots.api.client.DiscordBotListAPI;
-import org.discordbots.api.client.io.UnsuccessfulHttpException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 
 public class MinesweeperBotListenerAdapter extends ListenerAdapter {
     private static final String GETTING_STARTED_MESSAGE = "Hi, I'm MinesweeperBot. I can generate Minesweeper puzzles" +
