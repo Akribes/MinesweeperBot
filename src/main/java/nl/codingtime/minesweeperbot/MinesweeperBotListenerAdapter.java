@@ -31,9 +31,13 @@ import java.util.List;
 
 public class MinesweeperBotListenerAdapter extends ListenerAdapter {
     private static final String GETTING_STARTED_MESSAGE = "Hi, I'm MinesweeperBot. I can generate Minesweeper puzzles" +
-            " for you! To get started, DM or ping me the size and amount of mines for the puzzle. For example, if you" +
-            " say `5/6/7` (in servers: `@Minesweeper Bot#6157 5/6/7`), I'll send you a puzzle of 5 by 6 squares with 7 mines. If you're completely new to" + // TODO: Format the mention
-            " Minesweeper, read *How to play it?*, or you might get blown up by a mine!\n\n" +
+            " for you! To get started, DM or ping me something like this: `small easy` (in servers: " +
+            "`@Minesweeper Bot#6157 small easy`), and you'll get a puzzle. You can use `small`, `medium`, `large` and" +
+            " `extreme` as sizes and `easy`, `medium` and `hard` are the possible difficulties." +
+            "Alternatively, you can use numbers for a custom puzzle. For example, if you say `5 6 7` (in servers: " +
+            "`@Minesweeper Bot#6157 5 6 7`), I'll send you a puzzle of 5 by 6 squares with " +
+            "7 mines.\n\nIf you're completely new to " + // TODO: Format the mention
+            "Minesweeper, read *How to play it?*, or you might get blown up by a mine!\n\n" +
             "For support, you can join the Minesweeper Bot Discord server: https://discord.gg/uRXUEE4";
     private static final String HOW_TO_PLAY_MESSAGE = "A Minesweeper puzzle is a grid of squares you can click on." +
             " On this grid, several mines are located. The goal is to click all squares except for the squares with" +
@@ -102,9 +106,67 @@ public class MinesweeperBotListenerAdapter extends ListenerAdapter {
         System.out.println(sender + ": " + message);
         String command =  message.replace("!", "")
                 .replace("<@" + bot.getJda().getSelfUser().getId() + ">", "").trim();
-        String[] puzzle = command.split("/");
+
         String result;
-        if (!command.replaceFirst("/", "").contains("/")) {
+        if (command.matches("([0-9]+ ){2}[0-9]+")) {
+            String[] puzzle = command.split(" ");
+            if (Integer.parseInt(puzzle[0]) * Integer.parseInt(puzzle[1]) > bot.getConfig().getMaxSize()) {
+                result = "%ping%, the puzzle you want me to generate will be too big!";
+            } else {
+                try {
+                    result = new MinesweeperPuzzleBuilder().withWidth(Integer.parseInt(puzzle[0]))
+                            .withHeight(Integer.parseInt(puzzle[1])).withAmountOfMines(Integer.parseInt(puzzle[2])).build().toString();
+                    bot.getStats().incrementUses();
+                    bot.getStats().incrementMines(Long.parseLong(puzzle[2]));
+                    bot.getStats().registerUser(sender.getIdLong());
+                    if (privateChannel) {
+                        bot.getStats().registerPrivateChannelUser(sender.getIdLong());
+                    }
+                } catch (IllegalArgumentException | ArrayIndexOutOfBoundsException e) {
+                    result = "%ping%, make sure to follow this format: `width height mines` (all positive numbers)!";
+                }
+            }
+        } else if (command.matches("((small)|(medium)|(large)|(extreme)) ((easy)|(medium)|(hard)|(impossible))")) {
+            String[] puzzle = command.split(" ");
+            int size = 0;
+            int mines = 0;
+            switch (puzzle[0]) {
+                case "small":
+                    size = 5;
+                    break;
+                case "medium":
+                    size = 10;
+                    break;
+                case "large":
+                    size = 20;
+                    break;
+                case "extreme":
+                    size = 30;
+                    break;
+            }
+            switch (puzzle[1]) {
+                case "easy":
+                    mines = size * size / 6;
+                    break;
+                case "medium":
+                    mines = size * size / 4;
+                    break;
+                case "hard":
+                    mines = size * size / 3;
+                    break;
+                case "impossible":
+                    mines = size * size;
+                    break;
+            }
+            result = new MinesweeperPuzzleBuilder().withWidth(size)
+                    .withHeight(size).withAmountOfMines(mines).build().toString();
+            bot.getStats().incrementUses();
+            bot.getStats().incrementMines((long) mines);
+            bot.getStats().registerUser(sender.getIdLong());
+            if (privateChannel) {
+                bot.getStats().registerPrivateChannelUser(sender.getIdLong());
+            }
+        } else {
             channel.sendMessage(new EmbedBuilder().setTitle("About MinesweeperBot")
                     .setDescription("Here's some information about me!")
                     .setColor(0xFFA901)
@@ -120,24 +182,10 @@ public class MinesweeperBotListenerAdapter extends ListenerAdapter {
                             .replaceAll("%guilds%", String.valueOf(bot.getStats().getServers()))
                             .replaceAll("%privateChannels%", String.valueOf(bot.getStats().getPrivateChannelUserIds().size())),
                             false)
-                    .setFooter("Made by Mart#1056.", bot.getJda().getUserById(350609220846223362L).getAvatarUrl())
+                    .setFooter("Made by " + bot.getJda().getUserById(350609220846223362L).getAsTag() + ".",
+                            bot.getJda().getUserById(350609220846223362L).getAvatarUrl())
                     .build()).queue();
             return;
-        } else if (Integer.parseInt(puzzle[0]) * Integer.parseInt(puzzle[1]) > bot.getConfig().getMaxSize()) {
-            result = "%ping%, the puzzle you want me to generate will be too big!";
-        } else {
-            try {
-                result = new MinesweeperPuzzleBuilder().withWidth(Integer.parseInt(puzzle[0]))
-                        .withHeight(Integer.parseInt(puzzle[1])).withAmountOfMines(Integer.parseInt(puzzle[2])).build().toString();
-                bot.getStats().incrementUses();
-                bot.getStats().incrementMines(Long.parseLong(puzzle[2]));
-                bot.getStats().registerUser(sender.getIdLong());
-                if (privateChannel) {
-                    bot.getStats().registerPrivateChannelUser(sender.getIdLong());
-                }
-            } catch (IllegalArgumentException | ArrayIndexOutOfBoundsException e) {
-                result = "%ping%, make sure to follow this format: `width/height/mines` (all positive numbers)!";
-            }
         }
 
         String[] lines = result.split("\n");
